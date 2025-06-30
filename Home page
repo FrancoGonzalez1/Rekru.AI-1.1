@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekru.AI - AI Talent Acquisition</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter and Orbitron (for techy logo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Black base background */
+            color: #E0E0E0; /* Light grey text for contrast */
+        }
+        /* Custom scrollbar for a techy feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a; /* Dark track */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8B5CF6, #EC4899); /* Purple to pink gradient */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #7C3AED, #DB2777);
+        }
+
+        /* Star Wars-like button glow */
+        .btn-glow {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg at 50% 50%, #FF0000 0%, #FFA500 25%, #FFFF00 50%, #FFA500 75%, #FF0000 100%);
+            animation: rotate 4s linear infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .btn-glow:hover::before {
+            opacity: 1;
+        }
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
+            z-index: -1;
+            border-radius: 0.5rem;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Specific dropdown styling */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: #1a1a1a; /* Darker background for dropdown */
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.6);
+            z-index: 100;
+            border-radius: 0.5rem;
+            border: 1px solid #4A0E80; /* Deep purple border */
+            overflow: hidden; /* Ensure rounded corners apply to content */
+        }
+        .dropdown-menu a {
+            color: #E0E0E0;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .dropdown-menu a:hover {
+            background-color: #4A0E80; /* Deep purple hover */
+            color: #FFD700; /* Gold-like text on hover */
+        }
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* Hero section specific styling */
+        .hero-section {
+            background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(20,0,40,0.6), rgba(0,0,0,0.8));
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated grid overlay for techy feel */
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to right, rgba(74,14,128,0.1) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(74,14,128,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-move 60s linear infinite;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        @keyframes grid-move {
+            from { background-position: 0 0; }
+            to { background-position: 50px 50px; }
+        }
+
+        /* Glowing text effect for headings - adjusted for less shininess */
+        .text-glow {
+            text-shadow: 0 0 3px #8B5CF6, 0 0 6px #8B5CF6, 0 0 9px #8B5CF6; /* Reduced blur */
+        }
+        .text-glow-red {
+            text-shadow: 0 0 3px #EF4444, 0 0 6px #EF4444, 0 0 9px #EF4444; /* Reduced blur */
+        }
+
+        /* Custom style for the logo text */
+        .logo-font {
+            font-family: 'Orbitron', sans-serif; /* Applied Orbitron font */
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-200">
+
+    <!-- Header and Navigation -->
+    <header class="bg-black bg-opacity-80 backdrop-blur-sm fixed top-0 left-0 w-full z-50 shadow-lg rounded-b-lg">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo (now a Home button) -->
+            <div class="flex items-center">
+                <a href="#" class="text-purple-600 hover:text-purple-400 transition duration-300">
+                    <span class="text-4xl font-bold logo-font">Rekru.AI</span> <!-- Increased size and applied new font -->
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-300 focus:outline-none focus:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div id="desktop-menu" class="hidden md:flex items-center space-x-8">
+                <a href="#about" class="text-gray-300 hover:text-purple-400 transition duration-300 rounded-md p-2">About us</a>
+
+                <!-- Features Dropdown -->
+                <div class="relative dropdown">
+                    <button class="text-gray-300 hover:text-purple-400 transition duration-300 rounded-md p-2 flex items-center">
+                        Features
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="#resume-analyzer">Resume Analyzer</a>
+                        <a href="#ai-talent-sourcer">AI Talent Sourcer</a>
+                        <a href="#ai-job-poster">AI Job Description Poster</a>
+                    </div>
+                </div>
+
+                <!-- Settings Dropdown -->
+                <div class="relative dropdown">
+                    <button class="text-gray-300 hover:text-purple-400 transition duration-300 rounded-md p-2 flex items-center">
+                        Settings
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="login.html" target="_blank">Log in</a>
+                        <a href="signup.html" target="_blank">Sign up</a>
+                        <a href="#contact">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu (hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-900 py-2">
+            <a href="#about" class="block px-4 py-2 text-gray-300 hover:bg-purple-800 hover:text-white rounded-md mx-2 my-1">About us</a>
+            <div class="relative">
+                <button id="mobile-features-button" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-purple-800 hover:text-white rounded-md mx-2 my-1 flex justify-between items-center">
+                    Features
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div id="mobile-features-menu" class="hidden pl-6">
+                    <a href="#resume-analyzer" class="block px-4 py-2 text-gray-400 hover:bg-purple-700 hover:text-white rounded-md mx-2 my-1">Resume Analyzer</a>
+                    <a href="#ai-talent-sourcer" class="block px-4 py-2 text-gray-400 hover:bg-purple-700 hover:text-white rounded-md mx-2 my-1">AI Talent Sourcer</a>
+                    <a href="#ai-job-poster" class="block px-4 py-2 text-gray-400 hover:bg-purple-700 hover:text-white rounded-md mx-2 my-1">AI Job Description Poster</a>
+                </div>
+            </div>
+            <div class="relative">
+                <button id="mobile-settings-button" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-purple-800 hover:text-white rounded-md mx-2 my-1 flex justify-between items-center">
+                    Settings
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div id="mobile-settings-menu" class="hidden pl-6">
+                    <a href="login.html" target="_blank" class="block px-4 py-2 text-gray-400 hover:bg-purple-700 hover:text-white rounded-md mx-2 my-1">Log in</a>
+                    <a href="signup.html" target="_blank" class="block px-4 py-2 text-gray-400 hover:bg-purple-700 hover:text-white rounded-md mx-2 my-1">Sign up</a>
+                    <a href="#contact" class="block px-4 py-2 text-gray-400 hover:bg-purple-700 hover:text-white rounded-md mx-2 my-1">Contact</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-20"> <!-- Padding to account for fixed header -->
+        <!-- Hero Section -->
+        <section class="hero-section relative">
+            <div class="grid-overlay"></div>
+            <div class="relative z-10 p-8 max-w-4xl mx-auto">
+                <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight text-glow">
+                    Unleash the <span class="text-red-500 text-glow-red">Power of AI</span> in Talent Acquisition
+                </h1>
+                <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                    Rekru.AI empowers recruiters and companies with cutting-edge AI tools to find, analyze, and connect with the perfect talent, faster than ever before.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    <a href="#features" class="btn-glow px-8 py-4 bg-purple-700 text-white font-semibold rounded-lg shadow-lg hover:bg-purple-800 transition duration-300 transform hover:scale-105 text-lg">
+                        Explore Features
+                    </a>
+                    <a href="#contact" class="btn-glow px-8 py-4 bg-transparent border-2 border-red-500 text-red-500 font-semibold rounded-lg shadow-lg hover:bg-red-500 hover:text-white transition duration-300 transform hover:scale-105 text-lg">
+                        Get in Touch
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about" class="py-20 px-6 bg-gradient-to-b from-black to-gray-950">
+            <div class="container mx-auto max-w-4xl text-center">
+                <h2 class="text-4xl font-bold text-purple-500 mb-8 text-glow">About Rekru.AI</h2>
+                <p class="text-lg text-gray-300 leading-relaxed mb-6">
+                    At Rekru.AI, we believe that the future of talent acquisition lies in intelligent automation and data-driven insights. Our mission is to revolutionize how companies discover and engage with top-tier AI talent, bridging the gap between innovative roles and exceptional candidates.
+                </p>
+                <p class="text-lg text-gray-300 leading-relaxed">
+                    Founded by a team of AI specialists and recruitment veterans, Rekru.AI combines deep industry knowledge with advanced machine learning to deliver tools that are not just smart, but truly transformative. We are committed to fostering a more efficient, equitable, and effective hiring landscape for the AI era.
+                </p>
+            </div>
+        </section>
+
+        <!-- Features Overview Section -->
+        <section id="features" class="py-20 px-6 bg-gray-950">
+            <div class="container mx-auto max-w-6xl">
+                <h2 class="text-4xl font-bold text-red-500 text-center mb-12 text-glow-red">Our Core AI Features</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    <!-- Resume Analyzer -->
+                    <div id="resume-analyzer" class="bg-gray-800 p-8 rounded-xl shadow-xl border border-purple-800 transform hover:scale-105 transition duration-300">
+                        <div class="text-5xl text-purple-400 mb-4 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-white mb-4 text-center">Resume Analyzer</h3>
+                        <p class="text-gray-300 text-center">
+                            Our AI-powered Resume Analyzer intelligently scans and evaluates resumes, identifying key skills, experience, and potential matches with unparalleled accuracy. Streamline your screening process and focus on the best candidates.
+                        </p>
+                    </div>
+
+                    <!-- AI Talent Sourcer -->
+                    <div id="ai-talent-sourcer" class="bg-gray-800 p-8 rounded-xl shadow-xl border border-red-800 transform hover:scale-105 transition duration-300">
+                        <div class="text-5xl text-red-400 mb-4 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18v-1m-4 0h8m-10 0H4M7 8h4m-4 4h4m-4 8h4" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-white mb-4 text-center">AI Talent Sourcer</h3>
+                        <p class="text-gray-300 text-center">
+                            Discover hidden gems across vast talent pools. Our AI Talent Sourcer leverages advanced algorithms to identify passive candidates, predict their suitability, and provide actionable insights for outreach.
+                        </p>
+                    </div>
+
+                    <!-- AI Job Description Poster -->
+                    <div id="ai-job-poster" class="bg-gray-800 p-8 rounded-xl shadow-xl border border-yellow-800 transform hover:scale-105 transition duration-300">
+                        <div class="text-5xl text-yellow-400 mb-4 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-white mb-4 text-center">AI Job Description Poster</h3>
+                        <p class="text-gray-300 text-center">
+                            Craft compelling and optimized job descriptions in minutes. Our AI helps you write inclusive, keyword-rich, and engaging job posts that attract the right talent and improve your search rankings.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action / Contact Section -->
+        <section id="contact" class="py-20 px-6 bg-gradient-to-b from-gray-950 to-black">
+            <div class="container mx-auto max-w-3xl text-center">
+                <h2 class="text-4xl font-bold text-purple-500 mb-8 text-glow">Ready to Transform Your Hiring?</h2>
+                <p class="text-lg text-gray-300 mb-10">
+                    Join the future of talent acquisition with Rekru.AI. Whether you're looking to streamline your process, find niche AI talent, or simply learn more, we're here to help.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    <a href="signup.html" target="_blank" class="btn-glow px-8 py-4 bg-red-600 text-white font-semibold rounded-lg shadow-lg hover:bg-red-700 transition duration-300 transform hover:scale-105 text-lg">
+                        Sign Up Now
+                    </a>
+                    <a href="mailto:info@rekru.ai" class="btn-glow px-8 py-4 bg-transparent border-2 border-purple-500 text-purple-500 font-semibold rounded-lg shadow-lg hover:bg-purple-500 hover:text-white transition duration-300 transform hover:scale-105 text-lg">
+                        Contact Sales
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-8 px-6 text-center text-gray-500 text-sm rounded-t-lg">
+        <div class="container mx-auto">
+            <p>&copy; 2025 Rekru.AI. All rights reserved.</p>
+            <p class="mt-2">
+                <a href="#" class="hover:text-purple-400 transition duration-300">Privacy Policy</a> |
+                <a href="#" class="hover:text-purple-400 transition duration-300">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // JavaScript for mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // JavaScript for mobile dropdowns
+        const mobileFeaturesButton = document.getElementById('mobile-features-button');
+        const mobileFeaturesMenu = document.getElementById('mobile-features-menu');
+        const mobileSettingsButton = document.getElementById('mobile-settings-button');
+        const mobileSettingsMenu = document.getElementById('mobile-settings-menu');
+
+        mobileFeaturesButton.addEventListener('click', () => {
+            mobileFeaturesMenu.classList.toggle('hidden');
+        });
+
+        mobileSettingsButton.addEventListener('click', () => {
+            mobileSettingsMenu.classList.toggle('hidden');
+        });
+
+        // Close dropdowns when clicking outside (for desktop)
+        document.addEventListener('click', function(event) {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                if (!dropdown.contains(event.target)) {
+                    const menu = dropdown.querySelector('.dropdown-menu');
+                    if (menu) {
+                        menu.style.display = 'none'; // Hide the dropdown
+                    }
+                }
+            });
+        });
+
+        // Re-enable dropdown hover effect on desktop after a click outside
+        document.querySelectorAll('.dropdown').forEach(dropdown => {
+            dropdown.addEventListener('mouseenter', function() {
+                const menu = this.querySelector('.dropdown-menu');
+                if (menu) {
+                    menu.style.display = 'block';
+                }
+            });
+            dropdown.addEventListener('mouseleave', function() {
+                const menu = this.querySelector('.dropdown-menu');
+                if (menu) {
+                    menu.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
