@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekru.AI - Sign Up</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter and Orbitron -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Black base background */
+            color: #E0E0E0; /* Light grey text for contrast */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem; /* Add some padding for small screens */
+        }
+        .container {
+            background-color: #1a1a1a; /* Darker background for the form container */
+            border: 1px solid #4A0E80; /* Deep purple border */
+            box-shadow: 0 0 20px rgba(74, 14, 128, 0.5); /* Purple glow */
+            max-width: 450px;
+            width: 100%; /* Ensure it's responsive */
+        }
+        .input-field {
+            background-color: #0d0d0d;
+            border: 1px solid #333;
+            color: #E0E0E0;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem; /* rounded-md */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .input-field:focus {
+            border-color: #8B5CF6; /* Purple focus */
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.4);
+        }
+        .btn-primary {
+            background-color: #8B5CF6; /* Deep purple */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #7C3AED; /* Darker purple on hover */
+            transform: translateY(-2px);
+        }
+        .link-text {
+            color: #EC4899; /* Pinkish color for links */
+            transition: color 0.3s ease;
+        }
+        .link-text:hover {
+            color: #DB2777; /* Darker pink on hover */
+            text-decoration: underline;
+        }
+        .logo-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-200">
+    <div class="container p-8 rounded-lg">
+        <h1 class="text-3xl font-bold text-center text-purple-600 mb-8 logo-font">Rekru.AI - Sign Up</h1>
+        
+        <form class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-400 mb-2">Email or Username</label>
+                <input type="text" id="email" name="email" class="input-field w-full" placeholder="your@example.com" required>
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-400 mb-2">Password</label>
+                <input type="password" id="password" name="password" class="input-field w-full" placeholder="********" required>
+            </div>
+            <div>
+                <label for="confirm-password" class="block text-sm font-medium text-gray-400 mb-2">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" class="input-field w-full" placeholder="********" required>
+            </div>
+            
+            <button type="submit" class="btn-primary w-full">Sign Up</button>
+        </form>
+
+        <p class="text-center text-sm text-gray-400 mt-6">
+            Already have an account? <a href="login.html" class="link-text">Log In</a>
+        </p>
+    </div>
+</body>
+</html>
