@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rekru.AI - Smart AI Recruiting Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            brand: ['Orbitron', 'sans-serif'],
+          },
+          colors: {
+            space: '#0B0518',       /* Deep void purple-black */
+            surface: '#140A2B',     /* Dark violet backdrop */
+            panel: '#231145',       /* Deep rich purple card background */
+            panelBorder: '#431F75', /* Vivid purple border */
+            purpleNeon: '#B026FF',  /* Electric neon purple */
+            purpleHover: '#9300E8', /* Deep purple glow hover */
+            highlight: '#D8B4FE',   /* Soft lilac highlight */
+            accentOrange: '#FF6600',/* Vibrant secondary orange accent */
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { 
+      background-color: #0B0518; 
+      color: #E2E8F0; 
+      overflow-x: hidden; 
+    }
+    
+    /* Neon & Purple Glass Aesthetics */
+    .neon-purple-text { 
+      color: #B026FF; 
+      text-shadow: 0 0 12px rgba(176, 38, 255, 0.6); 
+    }
+    .neon-purple-border { 
+      border: 1px solid #B026FF; 
+      box-shadow: 0 0 15px rgba(176, 38, 255, 0.35); 
+    }
+    
+    /* Purple Buttons */
+    .btn-purple { 
+      background: linear-gradient(135deg, #B026FF 0%, #7E22CE 100%); 
+      box-shadow: 0 0 20px rgba(176, 38, 255, 0.4); 
+      color: #FFFFFF; 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    }
+    .btn-purple:hover { 
+      background: linear-gradient(135deg, #C046FF 0%, #9333EA 100%); 
+      box-shadow: 0 0 30px rgba(176, 38, 255, 0.7); 
+      transform: translateY(-2px);
+    }
+
+    .btn-orange-outline {
+      border: 1px solid #FF6600;
+      color: #FF6600;
+      transition: all 0.3s;
+    }
+    .btn-orange-outline:hover {
+      background: rgba(255, 102, 0, 0.15);
+      box-shadow: 0 0 15px rgba(255, 102, 0, 0.4);
+    }
+    
+    .glass-card { 
+      background: rgba(20, 10, 43, 0.75); 
+      backdrop-filter: blur(16px); 
+      border: 1px solid rgba(176, 38, 255, 0.25); 
+    }
+
+    .glass-card:hover {
+      border-color: rgba(176, 38, 255, 0.5);
+    }
+    
+    /* Scroll Reveal Animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.92);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .reveal-scale.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* View Navigation Smooth Fade */
+    .view { display: none; animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
+    .view.active { display: block; opacity: 1; }
+    @keyframes fadeIn { 
+      from { opacity: 0; transform: translateY(8px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+    
+    /* Dropdown UI */
+    .dropdown { 
+      opacity: 0; visibility: hidden; transform: translateY(-10px); 
+      transition: all 0.25s ease-out; 
+    }
+    .dropdown.show { 
+      opacity: 1; visibility: visible; transform: translateY(0); 
+    }
+
+    /* Toast System */
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .toast {
+      background: #231145;
+      border-left: 4px solid #B026FF;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Animated background glow circles */
+    .glow-purple {
+      background: radial-gradient(circle, rgba(176, 38, 255, 0.22) 0%, rgba(11, 5, 24, 0) 70%);
+    }
+    .glow-indigo {
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(11, 5, 24, 0) 70%);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-purpleNeon selection:text-white">
+  
+  <div id="toast-container"></div>
+
+  <!-- Navigation Header -->
+  <nav class="glass-card sticky top-0 z-50 px-6 py-4 flex justify-between items-center border-b border-purpleNeon/20 shadow-xl">
+    <!-- Brand Logo (Interconnected link to Home page) -->
+    <div class="cursor-pointer group flex items-center" onclick="navigate('home')" title="Rekru.AI Home">
+      <span class="font-brand font-black text-2xl md:text-3xl tracking-wider text-white group-hover:opacity-90 transition">
+        Rekru<span class="neon-purple-text">.AI</span>
+      </span>
+    </div>
+    
+    <!-- Nav Items & Feature Route Triggers -->
+    <div class="flex items-center gap-6">
+      <a href="#about-section" onclick="scrollToSection(event, 'about-section')" class="text-sm font-semibold text-gray-300 hover:text-purpleNeon transition hidden md:block">
+        About Us
+      </a>
+      <a href="#features-overview" onclick="scrollToSection(event, 'features-overview')" class="text-sm font-semibold text-gray-300 hover:text-purpleNeon transition hidden md:block">
+        Features Overview
+      </a>
+
+      <!-- Interconnected Tools Dropdown -->
+      <div class="relative group" id="features-dropdown-container">
+        <button onclick="toggleDropdown(event)" class="hover:text-purpleNeon transition flex items-center gap-1 font-semibold text-white text-sm bg-purpleNeon/10 border border-purpleNeon/30 px-3 py-1.5 rounded-lg">
+          Try Tools <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-200 text-purpleNeon" id="dropdown-icon"></i>
+        </button>
+        <div id="features-menu" class="dropdown absolute right-0 mt-3 w-64 glass-card rounded-xl shadow-2xl py-2 border border-purpleNeon/40 z-50">
+          <a href="#sourcing" onclick="navigate('sourcing'); event.preventDefault();" class="block px-4 py-3 hover:bg-panel hover:text-purpleNeon transition border-b border-purpleNeon/20 flex items-center gap-2 text-sm text-gray-200">
+            <i data-lucide="terminal" class="w-4 h-4 text-purpleNeon"></i> Smart Sourcing
+          </a>
+          <a href="#analyzer" onclick="navigate('analyzer'); event.preventDefault();" class="block px-4 py-3 hover:bg-panel hover:text-purpleNeon transition border-b border-purpleNeon/20 flex items-center gap-2 text-sm text-gray-200">
+            <i data-lucide="file-scan" class="w-4 h-4 text-purpleNeon"></i> Resume Analyzer
+          </a>
+          <a href="#job-forms" onclick="navigate('job-forms'); event.preventDefault();" class="block px-4 py-3 hover:bg-panel hover:text-purpleNeon transition border-b border-purpleNeon/20 flex items-center gap-2 text-sm text-gray-200">
+            <i data-lucide="file-input" class="w-4 h-4 text-purpleNeon"></i> Job Form Builder
+          </a>
+          <a href="#pipeline" onclick="navigate('pipeline'); event.preventDefault();" class="block px-4 py-3 hover:bg-panel hover:text-purpleNeon transition border-b border-purpleNeon/20 flex items-center gap-2 text-sm text-gray-200">
+            <i data-lucide="kanban" class="w-4 h-4 text-purpleNeon"></i> Candidate Pipeline
+          </a>
+          <a href="#ai-interviewer" onclick="navigate('ai-interviewer'); event.preventDefault();" class="block px-4 py-3 hover:bg-panel hover:text-purpleNeon transition flex items-center gap-2 text-sm text-gray-200">
+            <i data-lucide="bot" class="w-4 h-4 text-purpleNeon"></i> AI Interviewer <span class="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-purpleNeon/20 text-highlight border border-purpleNeon/30">BETA</span>
+          </a>
+        </div>
+      </div>
+
+      <button onclick="navigate('sourcing')" class="btn-purple text-sm font-brand font-bold px-4 py-2 rounded-lg flex items-center gap-2 hidden sm:flex">
+        <i data-lucide="zap" class="w-4 h-4"></i> Launch Platform
+      </button>
+
+      <!-- Logged In User Profile -->
+      <div class="flex items-center gap-3 pl-2 border-l border-panelBorder cursor-pointer hover:opacity-80 transition" onclick="showToast('Logged in as Enterprise Talent Lead')">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-purpleNeon to-indigo-600 text-white flex items-center justify-center font-brand font-bold border border-purpleNeon/50 shadow-[0_0_12px_rgba(176,38,255,0.5)]">
+          <i data-lucide="user" class="w-4 h-4"></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="flex-grow flex flex-col items-center w-full">
+    
+    <!-- HOME VIEW -->
+    <div id="home" class="view active w-full">
+      
+      <!-- HERO SECTION -->
+      <section class="relative min-h-[85vh] flex flex-col justify-center items-center text-center px-6 py-16 overflow-hidden">
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] glow-purple pointer-events-none rounded-full blur-3xl"></div>
+        <div class="absolute top-2/3 right-10 w-[400px] h-[400px] glow-indigo pointer-events-none rounded-full blur-3xl"></div>
+
+        <div class="relative z-10 max-w-4xl mx-auto space-y-8">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purpleNeon/40 bg-purpleNeon/10 text-highlight text-xs font-semibold tracking-wider uppercase backdrop-blur-md shadow-[0_0_15px_rgba(176,38,255,0.2)]">
+            <span class="w-2 h-2 rounded-full bg-purpleNeon animate-ping"></span>
+            NEXT-GEN RECRUITING INTELLIGENCE
+          </div>
+          
+          <h1 class="font-brand text-5xl sm:text-6xl md:text-7xl font-black tracking-wide text-white leading-tight">
+            INTELLIGENT TALENT SOURCING AT <span class="neon-purple-text">WARP SPEED</span>
+          </h1>
+          
+          <p class="text-gray-300 text-lg md:text-2xl max-w-2xl mx-auto leading-relaxed font-light">
+            Deploy deep neural evaluation to turn vague job requirements into pinpoint search queries and instant multi-dimensional resume scoring.
+          </p>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row justify-center items-center gap-5 pt-4">
+            <button onclick="scrollToSection(event, 'features-overview')" class="btn-purple font-brand font-bold px-8 py-4 rounded-xl flex items-center justify-center gap-3 text-lg w-full sm:w-auto">
+              <i data-lucide="sparkles" class="w-5 h-5"></i> Explore Features
+            </button>
+            <button onclick="navigate('sourcing')" class="glass-card hover:border-purpleNeon text-white font-brand font-bold px-8 py-4 rounded-xl flex items-center justify-center gap-3 text-lg w-full sm:w-auto transition group">
+              <span>Direct Sourcing</span>
+              <i data-lucide="arrow-right" class="w-5 h-5 text-purpleNeon group-hover:translate-x-1 transition-transform"></i>
+            </button>
+          </div>
+
+          <!-- Down Scroll Indicator -->
+          <div class="pt-12 flex justify-center">
+            <a href="#company-metrics" onclick="scrollToSection(event, 'company-metrics')" class="animate-bounce p-3 rounded-full bg-panel/60 border border-purpleNeon/30 text-purpleNeon hover:text-white transition">
+              <i data-lucide="chevron-down" class="w-6 h-6"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- METRICS & IMPACT BAR -->
+      <section id="company-metrics" class="w-full border-y border-purpleNeon/20 bg-surface/60 py-12 px-6">
+        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div class="reveal space-y-2">
+            <div class="font-brand text-4xl sm:text-5xl font-extrabold neon-purple-text">10x</div>
+            <div class="text-sm font-medium text-gray-400">Faster Talent Sourcing</div>
+          </div>
+          <div class="reveal space-y-2">
+            <div class="font-brand text-4xl sm:text-5xl font-extrabold text-white">98.4%</div>
+            <div class="text-sm font-medium text-gray-400">Match Accuracy Precision</div>
+          </div>
+          <div class="reveal space-y-2">
+            <div class="font-brand text-4xl sm:text-5xl font-extrabold neon-purple-text">&lt; 2s</div>
+            <div class="text-sm font-medium text-gray-400">Boolean Query Synthesis</div>
+          </div>
+          <div class="reveal space-y-2">
+            <div class="font-brand text-4xl sm:text-5xl font-extrabold text-white">50K+</div>
+            <div class="text-sm font-medium text-gray-400">Resumes Analyzed</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT THE COMPANY SECTION -->
+      <section id="about-section" class="py-24 px-6 max-w-6xl mx-auto w-full">
+        <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+          <span class="text-purpleNeon font-brand text-xs font-bold uppercase tracking-widest bg-purpleNeon/10 border border-purpleNeon/30 px-3 py-1 rounded-full">
+            Who We Are
+          </span>
+          <h2 class="font-brand text-3xl sm:text-5xl font-bold text-white mt-4 mb-6">
+            Redefining How Tech Talent is Discovered
+          </h2>
+          <p class="text-gray-300 text-lg leading-relaxed">
+            At <strong class="text-white">Rekru.AI</strong>, we believe traditional keyword matching is obsolete. Modern tech hiring requires contextual understanding, real-time boolean accuracy, and objective skill synthesis.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="reveal glass-card p-8 rounded-2xl border border-purpleNeon/30 hover:border-purpleNeon transition relative group overflow-hidden">
+            <div class="w-14 h-14 rounded-xl bg-purpleNeon/10 border border-purpleNeon/40 text-purpleNeon flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <i data-lucide="cpu" class="w-7 h-7"></i>
+            </div>
+            <h3 class="font-brand text-xl font-bold text-white mb-3">Contextual AI Intelligence</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">
+              Our models look beyond exact word matches to understand implicit technical skillsets, methodologies, and seniority requirements.
+            </p>
+          </div>
+
+          <div class="reveal glass-card p-8 rounded-2xl border border-purpleNeon/30 hover:border-purpleNeon transition relative group overflow-hidden">
+            <div class="w-14 h-14 rounded-xl bg-purpleNeon/10 border border-purpleNeon/40 text-purpleNeon flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <i data-lucide="target" class="w-7 h-7"></i>
+            </div>
+            <h3 class="font-brand text-xl font-bold text-white mb-3">Zero-Bias Screening</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">
+              Standardize evaluation criteria across candidates. Every resume is evaluated strictly against job objectives and proven capabilities.
+            </p>
+          </div>
+
+          <div class="reveal glass-card p-8 rounded-2xl border border-purpleNeon/30 hover:border-purpleNeon transition relative group overflow-hidden">
+            <div class="w-14 h-14 rounded-xl bg-purpleNeon/10 border border-purpleNeon/40 text-purpleNeon flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <i data-lucide="zap" class="w-7 h-7 text-accentOrange"></i>
+            </div>
+            <h3 class="font-brand text-xl font-bold text-white mb-3">Instant Execution</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">
+              Generate complex Boolean strings ready for LinkedIn or candidate databases in milliseconds, saving recruiters dozens of manual hours.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURES DIRECT NAVIGATION SECTION -->
+      <section id="features-overview" class="py-24 px-6 max-w-6xl mx-auto w-full">
+        <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+          <span class="text-purpleNeon font-brand text-xs font-bold uppercase tracking-widest bg-purpleNeon/10 border border-purpleNeon/30 px-3 py-1 rounded-full">
+            Core Platform Modules
+          </span>
+          <h2 class="font-brand text-3xl sm:text-5xl font-bold text-white mt-4 mb-4">
+            Complete Recruiting & ATS Suite
+          </h2>
+          <p class="text-gray-300">Select any module below to jump directly into that interactive workspace.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <!-- Module 1: Smart Sourcing -->
+          <div class="reveal-scale glass-card p-6 rounded-2xl border-2 border-purpleNeon/40 hover:border-purpleNeon transition-all flex flex-col justify-between group">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <div class="p-3 rounded-xl bg-purpleNeon/10 border border-purpleNeon/40 text-purpleNeon">
+                  <i data-lucide="terminal" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[10px] font-brand font-bold text-purpleNeon uppercase tracking-wider bg-purpleNeon/20 px-2.5 py-1 rounded-full">Module 01</span>
+              </div>
+              <h3 class="font-brand text-xl font-bold text-white mb-2">Smart Sourcing Engine</h3>
+              <p class="text-gray-300 text-xs leading-relaxed mb-6">
+                Translate natural prompts into precise Boolean search queries for LinkedIn Recruiter & web search.
+              </p>
+            </div>
+            <button onclick="navigate('sourcing')" class="btn-purple font-brand font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 w-full text-xs">
+              <span>Launch Sourcing</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Module 2: Resume Analyzer -->
+          <div class="reveal-scale glass-card p-6 rounded-2xl border-2 border-purpleNeon/40 hover:border-purpleNeon transition-all flex flex-col justify-between group">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <div class="p-3 rounded-xl bg-purpleNeon/10 border border-purpleNeon/40 text-purpleNeon">
+                  <i data-lucide="file-scan" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[10px] font-brand font-bold text-purpleNeon uppercase tracking-wider bg-purpleNeon/20 px-2.5 py-1 rounded-full">Module 02</span>
+              </div>
+              <h3 class="font-brand text-xl font-bold text-white mb-2">Resume Analyzer</h3>
+              <p class="text-gray-300 text-xs leading-relaxed mb-6">
+                Evaluate candidates against job criteria with match scoring and bulleted strengths/gaps analysis.
+              </p>
+            </div>
+            <button onclick="navigate('analyzer')" class="btn-purple font-brand font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 w-full text-xs">
+              <span>Launch Analyzer</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Module 3: Job Form Builder -->
+          <div class="reveal-scale glass-card p-6 rounded-2xl border-2 border-purpleNeon/40 hover:border-purpleNeon transition-all flex flex-col justify-between group">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <div class="p-3 rounded-xl bg-purpleNeon/10 border border-purpleNeon/40 text-purpleNeon">
+                  <i data-lucide="file-input" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[10px] font-brand font-bold text-purpleNeon uppercase tracking-wider bg-purpleNeon/20 px-2.5 py-1 rounded-full">Module 03</span>
+              </div>
+              <h3 class="font-brand text-xl font-bold text-white mb-2">Job Form Builder</h3>
+              <p class="text-gray-300 text-xs leading-relaxed mb-6">
+                Build custom candidate application portals for open roles and generate direct public share links.
+              </p>
+            </div>
+            <button onclick="navigate('job-forms')" class="btn-purple font-brand font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 w-full text-xs">
+              <span>Open Form Builder</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Module 4: Agile Candidate Pipeline -->
+          <div class="reveal-scale glass-card p-6 rounded-2xl border-2 border-purpleNeon/40 hover:border-purpleNeon transition-all flex flex-col justify-between group">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <div class="p-3 rounded-xl bg-purpleNeon/10 border border-purpleNeon/40 text-purpleNeon">
+                  <i data-lucide="kanban" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[10px] font-brand font-bold text-purpleNeon uppercase tracking-wider bg-purpleNeon/20 px-2.5 py-1 rounded-full">Module 04</span>
+              </div>
+              <h3 class="font-brand text-xl font-bold text-white mb-2">Agile Pipeline Board</h3>
+              <p class="text-gray-300 text-xs leading-relaxed mb-6">
+                Kanban management board to transition applicants across stages from Applied to Hired.
+              </p>
+            </div>
+            <button onclick="navigate('pipeline')" class="btn-purple font-brand font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 w-full text-xs">
+              <span>Open Pipeline</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Module 5: AI Interviewer -->
+          <div class="reveal-scale glass-card p-6 rounded-2xl border-2 border-purpleNeon/40 hover:border-purpleNeon transition-all flex flex-col justify-between group col-span-1 md:col-span-2 lg:col-span-1">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <div class="p-3 rounded-xl bg-purpleNeon/10 border border-purpleNeon/40 text-purpleNeon">
+                  <i data-lucide="bot" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[10px] font-brand font-bold text-highlight uppercase tracking-wider bg-purpleNeon/30 border border-purpleNeon/40 px-2.5 py-1 rounded-full">Interactive Demo</span>
+              </div>
+              <h3 class="font-brand text-xl font-bold text-white mb-2">AI Interviewer Agent</h3>
+              <p class="text-gray-300 text-xs leading-relaxed mb-6">
+                Autonomous conversational AI to conduct initial screening calls and score candidate responses.
+              </p>
+            </div>
+            <button onclick="navigate('ai-interviewer')" class="btn-orange-outline font-brand font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 w-full text-xs">
+              <span>Preview AI Agent</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- BOTTOM CALL TO ACTION BANNER -->
+      <section class="py-20 px-6 max-w-5xl mx-auto w-full my-10">
+        <div class="reveal glass-card p-10 md:p-14 rounded-3xl border-2 border-purpleNeon/50 text-center relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-r from-purpleNeon/10 to-indigo-600/10 pointer-events-none"></div>
+          <h2 class="font-brand text-3xl sm:text-5xl font-black text-white mb-6">Ready to Supercharge Recruiting?</h2>
+          <p class="text-gray-300 max-w-xl mx-auto mb-8 text-base">Start generating precise search strings or score candidate resumes right now.</p>
+          <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <button onclick="navigate('sourcing')" class="btn-purple font-brand font-bold px-8 py-4 rounded-xl flex items-center justify-center gap-2 text-lg">
+              <i data-lucide="terminal" class="w-5 h-5"></i> Start Smart Sourcing
+            </button>
+            <button onclick="navigate('analyzer')" class="btn-orange-outline font-brand font-bold px-8 py-4 rounded-xl flex items-center justify-center gap-2 text-lg">
+              <i data-lucide="file-scan" class="w-5 h-5"></i> Start Resume Analyzer
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="border-t border-purpleNeon/20 bg-space py-10 px-6 w-full text-center text-gray-500 text-xs">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="cursor-pointer" onclick="navigate('home')">
+            <span class="font-brand font-bold text-lg text-white">Rekru<span class="neon-purple-text">.AI</span></span>
+            <p class="mt-1">Next-Generation Talent Sourcing & Evaluation Platform</p>
+          </div>
+          <div class="flex gap-6">
+            <a href="#" onclick="showToast('Privacy Policy'); return false;" class="hover:text-purpleNeon transition">Privacy</a>
+            <a href="#" onclick="showToast('Terms of Service'); return false;" class="hover:text-purpleNeon transition">Terms</a>
+            <a href="#" onclick="showToast('API Documentation'); return false;" class="hover:text-purpleNeon transition">API</a>
+          </div>
+          <p>&copy; 2026 Rekru.AI All rights reserved.</p>
+        </div>
+      </footer>
+
+    </div>
+
+
+    <!-- SOURCING VIEW -->
+    <div id="sourcing" class="view w-full max-w-4xl px-6 py-10">
+      <div class="mb-8 flex items-center justify-between">
+        <div>
+          <button onclick="navigate('home')" class="text-xs text-purpleNeon hover:underline mb-2 flex items-center gap-1 font-semibold">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Home
+          </button>
+          <h2 class="font-brand text-3xl font-bold flex items-center gap-3 text-white">
+            <i data-lucide="terminal" class="text-purpleNeon w-8 h-8"></i> Smart Sourcing Engine
+          </h2>
+          <p class="text-gray-400 text-sm mt-1">Describe candidate profile in plain English. AI translates it into complex Boolean queries.</p>
+        </div>
+      </div>
+      
+      <div class="glass-card p-6 rounded-2xl mb-8 border border-purpleNeon/30 shadow-2xl relative overflow-hidden">
+        <label class="block text-sm font-semibold mb-3 text-gray-200 flex items-center gap-2">
+          <i data-lucide="message-square" class="w-4 h-4 text-purpleNeon"></i> Prompt the AI
+        </label>
+        <textarea id="search-prompt" rows="4" class="w-full bg-space/90 border border-panelBorder rounded-xl p-4 text-white focus:outline-none focus:border-purpleNeon focus:ring-1 focus:ring-purpleNeon transition resize-none placeholder-gray-500 text-sm" placeholder="e.g., I'm looking for a Senior Tech Lead with strong Python, AWS, and Microservices background located in LATAM or US, strictly no junior or intern profiles..."></textarea>
+        <div class="flex justify-between items-center mt-4">
+          <button onclick="loadSamplePrompt()" class="text-xs text-purpleNeon hover:underline font-semibold flex items-center gap-1">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Fill Sample Prompt
+          </button>
+          <button onclick="generateBoolean(event)" class="btn-purple font-bold px-6 py-3 rounded-xl flex items-center gap-2">
+            <i data-lucide="zap" class="w-5 h-5"></i> Generate Query
+          </button>
+        </div>
+      </div>
+
+      <div id="boolean-result" class="hidden glass-card p-6 rounded-2xl neon-purple-border relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1.5 h-full bg-purpleNeon"></div>
+        <h3 class="font-brand text-xl font-bold mb-5 text-white flex items-center gap-2">
+          <i data-lucide="check-circle-2" class="text-green-400 w-5 h-5"></i> Generated Search Strings
+        </h3>
+        
+        <div class="mb-6 space-y-4">
+          <div>
+            <label class="block text-xs text-purpleNeon mb-2 uppercase tracking-widest font-bold">LinkedIn Recruiter String</label>
+            <div class="bg-space/90 p-4 rounded-xl border border-panelBorder font-mono text-sm break-all text-gray-200 relative group">
+              <span id="linkedin-str">("Tech Lead" OR "Senior Software Engineer" OR "Lead Developer") AND (Python AND AWS AND Microservices) AND (LATAM OR "United States" OR Remote) NOT (Junior OR Jr OR Intern)</span>
+              <button onclick="copyToClipboard('linkedin-str')" class="absolute top-3 right-3 text-gray-400 hover:text-white bg-panel p-2 rounded-lg opacity-80 hover:opacity-100 transition" title="Copy to clipboard">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs text-purpleNeon mb-2 uppercase tracking-widest font-bold">Google X-Ray Web Search String</label>
+            <div class="bg-space/90 p-4 rounded-xl border border-panelBorder font-mono text-sm break-all text-gray-200 relative group">
+              <span id="xray-str">site:linkedin.com/in/ ("Tech Lead" OR "Senior Software Engineer") "Python" "AWS" "Microservices" -"Junior" -"Intern"</span>
+              <button onclick="copyToClipboard('xray-str')" class="absolute top-3 right-3 text-gray-400 hover:text-white bg-panel p-2 rounded-lg opacity-80 hover:opacity-100 transition" title="Copy to clipboard">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-between items-center pt-5 border-t border-purpleNeon/20 gap-4">
+          <p class="text-xs text-gray-400"><i data-lucide="info" class="w-4 h-4 inline mb-0.5 text-purpleNeon"></i> Ready for deployment in LinkedIn Recruiter or standard search engine.</p>
+          <button onclick="testLinkedIn()" class="bg-[#0077b5] hover:bg-[#005582] text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold transition shadow-lg w-full sm:w-auto justify-center text-sm">
+            <i data-lucide="linkedin" class="w-4 h-4"></i> Test Search on LinkedIn
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ANALYZER VIEW -->
+    <div id="analyzer" class="view w-full max-w-6xl px-6 py-10">
+      <div class="mb-8 flex items-center justify-between">
+        <div>
+          <button onclick="navigate('home')" class="text-xs text-purpleNeon hover:underline mb-2 flex items-center gap-1 font-semibold">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Home
+          </button>
+          <h2 class="font-brand text-3xl font-bold flex items-center gap-3 text-white">
+            <i data-lucide="file-scan" class="text-purpleNeon w-8 h-8"></i> Resume Analyzer
+          </h2>
+          <p class="text-gray-400 text-sm mt-1">Upload candidate resume and set criteria to generate multi-dimensional fit scoring.</p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+        <!-- Input Section -->
+        <div class="flex flex-col gap-6">
+          <div class="glass-card p-6 rounded-2xl flex-grow shadow-lg">
+            <div class="flex justify-between items-center mb-3">
+              <label class="block text-sm font-semibold text-gray-200 flex items-center gap-2">
+                <i data-lucide="filter" class="w-4 h-4 text-purpleNeon"></i> Job Requirements / Evaluation Criteria
+              </label>
+              <button onclick="loadSampleReqs()" class="text-xs text-purpleNeon hover:underline font-semibold">
+                Load Preset Criteria
+              </button>
+            </div>
+            <textarea id="analyzer-reqs" rows="5" class="w-full bg-space/90 border border-panelBorder rounded-xl p-4 text-white focus:outline-none focus:border-purpleNeon focus:ring-1 focus:ring-purpleNeon transition resize-none placeholder-gray-500 text-sm" placeholder="e.g., Senior Lead Engineer: Must have 5+ years in Python development, AWS architecture, microservices design, and team leadership experience."></textarea>
+          </div>
+          
+          <div class="glass-card p-8 rounded-2xl border-2 border-dashed border-purpleNeon/40 hover:border-purpleNeon transition-colors flex flex-col items-center justify-center text-center cursor-pointer flex-grow relative overflow-hidden group" id="dropzone" onclick="document.getElementById('file-upload').click()">
+            <div class="absolute inset-0 bg-purpleNeon/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+            <input type="file" id="file-upload" class="hidden" accept=".pdf,.doc,.docx,.txt">
+            <i data-lucide="upload-cloud" class="w-12 h-12 text-purpleNeon mb-3 group-hover:scale-110 transition-transform" id="upload-icon"></i>
+            <p class="font-semibold text-white mb-1 text-base" id="file-name">Drop Resume Here or Click to Browse</p>
+            <p class="text-xs text-gray-400 mb-3">Supports PDF, DOCX, TXT</p>
+            <button type="button" onclick="loadDemoResume(event)" class="text-xs font-semibold text-purpleNeon bg-purpleNeon/10 border border-purpleNeon/30 px-3 py-1.5 rounded-lg hover:bg-purpleNeon/20 transition z-10">
+              Attach Sample Resume (Alex Rivera)
+            </button>
+          </div>
+          
+          <button onclick="analyzeResume(event)" class="btn-purple font-bold py-4 rounded-xl flex justify-center items-center gap-2 w-full text-base shadow-xl">
+            <i data-lucide="cpu" class="w-5 h-5"></i> Analyze Candidate Fit
+          </button>
+        </div>
+
+        <!-- Output Analysis Results Section -->
+        <div class="glass-card p-6 rounded-2xl shadow-xl bg-gradient-to-br from-panel to-space border border-purpleNeon/30 flex flex-col justify-between">
+          
+          <!-- Empty State Placeholder -->
+          <div id="analysis-placeholder" class="h-full flex flex-col items-center justify-center py-16 text-center text-gray-400 space-y-4">
+            <div class="w-16 h-16 rounded-2xl bg-purpleNeon/10 border border-purpleNeon/30 text-purpleNeon flex items-center justify-center">
+              <i data-lucide="bar-chart-3" class="w-8 h-8"></i>
+            </div>
+            <h4 class="font-brand text-lg text-white font-bold">Analysis Output Workspace</h4>
+            <p class="text-xs max-w-xs leading-relaxed">Select job requirements and attach a candidate resume to synthesize fit metrics.</p>
+          </div>
+
+          <!-- Computed Result Display -->
+          <div id="analysis-result" class="hidden space-y-6">
+            <div class="flex items-center justify-between border-b border-purpleNeon/20 pb-4">
+              <div>
+                <span class="text-[10px] font-brand uppercase tracking-widest text-purpleNeon font-bold">Candidate Report</span>
+                <h3 class="font-brand text-2xl font-bold text-white">Alex Rivera</h3>
+                <p class="text-xs text-gray-400">Senior Software Engineer &bull; 6 Years Exp</p>
+              </div>
+              <div class="text-center bg-purpleNeon/10 border border-purpleNeon/40 p-3 rounded-2xl">
+                <div class="font-brand text-3xl font-black text-purpleNeon">92%</div>
+                <div class="text-[10px] font-bold text-gray-300 uppercase">Fit Match Score</div>
+              </div>
+            </div>
+
+            <!-- Strengths -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-brand uppercase tracking-wider text-green-400 font-bold flex items-center gap-1.5">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> Candidate Core Strengths
+              </h4>
+              <ul class="text-xs text-gray-300 space-y-1.5 list-disc pl-5">
+                <li>Demonstrated 6+ years building distributed microservices architecture in Python.</li>
+                <li>Extensive hands-on AWS deployment experience (ECS, Lambda, Terraform, S3).</li>
+                <li>Led cross-functional team of 5 backend engineers in previous role.</li>
+              </ul>
+            </div>
+
+            <!-- Gaps -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-brand uppercase tracking-wider text-amber-400 font-bold flex items-center gap-1.5">
+                <i data-lucide="alert-triangle" class="w-4 h-4"></i> Technical Gaps / Screening Notes
+              </h4>
+              <ul class="text-xs text-gray-300 space-y-1.5 list-disc pl-5">
+                <li>Limited explicit Kubernetes cluster administration experience listed.</li>
+                <li>Verify GraphQL experience versus REST API background during screening.</li>
+              </ul>
+            </div>
+
+            <!-- Competency Breakdown -->
+            <div class="pt-3 border-t border-purpleNeon/20 space-y-3">
+              <h4 class="text-xs font-brand uppercase tracking-wider text-purpleNeon font-bold">Competency Breakdown</h4>
+              <div class="space-y-2 text-xs">
+                <div>
+                  <div class="flex justify-between text-gray-300 mb-1"><span>Python & Architecture</span><span class="font-mono text-purpleNeon font-bold">95%</span></div>
+                  <div class="w-full bg-space h-2 rounded-full"><div class="bg-purpleNeon h-2 rounded-full" style="width: 95%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-gray-300 mb-1"><span>Cloud Infrastructure (AWS)</span><span class="font-mono text-purpleNeon font-bold">90%</span></div>
+                  <div class="w-full bg-space h-2 rounded-full"><div class="bg-purpleNeon h-2 rounded-full" style="width: 90%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-gray-300 mb-1"><span>Leadership & Team Guidance</span><span class="font-mono text-purpleNeon font-bold">88%</span></div>
+                  <div class="w-full bg-space h-2 rounded-full"><div class="bg-purpleNeon h-2 rounded-full" style="width: 88%"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pipeline Action CTA -->
+            <div class="pt-4 flex justify-between items-center">
+              <button onclick="addAnalyzedToPipeline()" class="btn-purple text-xs font-brand font-bold py-3 px-5 rounded-xl flex items-center gap-2 w-full justify-center">
+                <i data-lucide="user-plus" class="w-4 h-4"></i> Add Alex Rivera to Candidate Pipeline
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- JOB APPLICATION FORM BUILDER VIEW -->
+    <div id="job-forms" class="view w-full max-w-6xl px-6 py-10">
+      <div class="mb-8 flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <button onclick="navigate('home')" class="text-xs text-purpleNeon hover:underline mb-2 flex items-center gap-1 font-semibold">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Home
+          </button>
+          <h2 class="font-brand text-3xl font-bold flex items-center gap-3 text-white">
+            <i data-lucide="file-input" class="text-purpleNeon w-8 h-8"></i> Job Form Builder
+          </h2>
+          <p class="text-gray-400 text-sm mt-1">Design application portals for open positions and generate shareable candidate links.</p>
+        </div>
+        <button onclick="showToast('New Job Posting Form Builder Initialized')" class="btn-purple font-brand font-bold px-5 py-3 rounded-xl flex items-center gap-2 text-sm shadow-xl">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> Create New Position Form
+        </button>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-8">
+        <!-- Active Forms List -->
+        <div class="lg:col-span-1 space-y-4">
+          <h3 class="font-brand text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="layers" class="w-4 h-4 text-purpleNeon"></i> Active Positions (3)
+          </h3>
+          
+          <!-- Card 1 -->
+          <div class="glass-card p-5 rounded-2xl border border-purpleNeon/40 hover:border-purpleNeon cursor-pointer transition active-job-card" onclick="selectForm(0)">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-brand font-bold text-purpleNeon bg-purpleNeon/10 px-2.5 py-0.5 rounded border border-purpleNeon/30">ENGINEERING</span>
+              <span class="text-[10px] text-green-400 flex items-center gap-1 font-semibold"><span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Active</span>
+            </div>
+            <h4 class="font-brand text-base font-bold text-white">Senior Lead Engineer</h4>
+            <p class="text-xs text-gray-400 mt-1">Remote (LATAM / US) &bull; Full-time</p>
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-purpleNeon/20 text-xs text-gray-300">
+              <span>18 Applications</span>
+              <span class="text-purpleNeon flex items-center gap-1 font-semibold"><i data-lucide="external-link" class="w-3 h-3"></i> Select</span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="glass-card p-5 rounded-2xl border border-panelBorder hover:border-purpleNeon cursor-pointer transition active-job-card" onclick="selectForm(1)">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-brand font-bold text-purpleNeon bg-purpleNeon/10 px-2.5 py-0.5 rounded border border-purpleNeon/30">PRODUCT</span>
+              <span class="text-[10px] text-green-400 flex items-center gap-1 font-semibold"><span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Active</span>
+            </div>
+            <h4 class="font-brand text-base font-bold text-white">Principal AI Specialist</h4>
+            <p class="text-xs text-gray-400 mt-1">San Francisco, CA / Hybrid &bull; Full-time</p>
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-purpleNeon/20 text-xs text-gray-300">
+              <span>9 Applications</span>
+              <span class="text-purpleNeon flex items-center gap-1 font-semibold"><i data-lucide="external-link" class="w-3 h-3"></i> Select</span>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="glass-card p-5 rounded-2xl border border-panelBorder hover:border-purpleNeon cursor-pointer transition active-job-card" onclick="selectForm(2)">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-brand font-bold text-purpleNeon bg-purpleNeon/10 px-2.5 py-0.5 rounded border border-purpleNeon/30">DESIGN</span>
+              <span class="text-[10px] text-green-400 flex items-center gap-1 font-semibold"><span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Active</span>
+            </div>
+            <h4 class="font-brand text-base font-bold text-white">Staff UI/UX Architect</h4>
+            <p class="text-xs text-gray-400 mt-1">Remote &bull; Full-time</p>
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-purpleNeon/20 text-xs text-gray-300">
+              <span>12 Applications</span>
+              <span class="text-purpleNeon flex items-center gap-1 font-semibold"><i data-lucide="external-link" class="w-3 h-3"></i> Select</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Link & Live Public Portal Simulator -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+          
+          <!-- Share Link Box -->
+          <div class="glass-card p-6 rounded-2xl border border-purpleNeon/30 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="w-full sm:w-auto">
+              <span class="text-xs uppercase font-brand font-bold text-purpleNeon">Public Candidate URL</span>
+              <p class="font-mono text-xs text-gray-300 mt-1 bg-space p-2.5 rounded-lg border border-panelBorder truncate max-w-md" id="public-form-url">
+                https://rekru.ai/careers/apply/senior-lead-engineer-8492
+              </p>
+            </div>
+            <button onclick="copyFormLink()" class="btn-purple px-5 py-2.5 rounded-xl text-xs font-bold font-brand flex items-center gap-2 whitespace-nowrap w-full sm:w-auto justify-center">
+              <i data-lucide="copy" class="w-4 h-4"></i> Copy Link
+            </button>
+          </div>
+
+          <!-- Candidate Portal Interactive Simulator -->
+          <div class="glass-card p-8 rounded-2xl border-2 border-purpleNeon/40 shadow-2xl relative overflow-hidden bg-space/80">
+            <div class="flex items-center justify-between border-b border-purpleNeon/20 pb-4 mb-6">
+              <div>
+                <span class="text-xs font-brand text-purpleNeon uppercase tracking-widest font-bold">Public Candidate View</span>
+                <h3 class="font-brand text-2xl font-bold text-white mt-1" id="form-preview-title">Senior Lead Engineer</h3>
+              </div>
+              <span class="px-3 py-1 bg-purpleNeon/10 border border-purpleNeon/30 text-highlight text-xs font-semibold rounded-full">
+                Live Public Portal
+              </span>
+            </div>
+
+            <form id="candidate-apply-form" onsubmit="submitCandidateApp(event)" class="space-y-5">
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-300 mb-1">Full Name *</label>
+                  <input type="text" id="app-name" required placeholder="e.g. Maria Gonzalez" class="w-full bg-surface border border-panelBorder rounded-lg p-3 text-xs text-white focus:outline-none focus:border-purpleNeon">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-gray-300 mb-1">Email Address *</label>
+                  <input type="email" id="app-email" required placeholder="maria.g@example.com" class="w-full bg-surface border border-panelBorder rounded-lg p-3 text-xs text-white focus:outline-none focus:border-purpleNeon">
+                </div>
+              </div>
+
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-300 mb-1">LinkedIn Profile URL</label>
+                  <input type="url" id="app-linkedin" placeholder="https://linkedin.com/in/mariagonzalez" class="w-full bg-surface border border-panelBorder rounded-lg p-3 text-xs text-white focus:outline-none focus:border-purpleNeon">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-gray-300 mb-1">Years of Experience</label>
+                  <input type="number" id="app-exp" min="0" max="40" placeholder="7" class="w-full bg-surface border border-panelBorder rounded-lg p-3 text-xs text-white focus:outline-none focus:border-purpleNeon">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-gray-300 mb-1">Upload Resume (PDF, DOCX) *</label>
+                <div class="border border-dashed border-panelBorder hover:border-purpleNeon p-4 rounded-lg bg-surface/50 text-center cursor-pointer transition">
+                  <i data-lucide="upload" class="w-5 h-5 mx-auto text-purpleNeon mb-1"></i>
+                  <span class="text-xs text-gray-300">Click to attach resume file</span>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-gray-300 mb-1">Screening Question: Why are you a strong fit?</label>
+                <textarea id="app-answer" rows="3" placeholder="Briefly summarize your background in cloud infrastructure and team lead roles..." class="w-full bg-surface border border-panelBorder rounded-lg p-3 text-xs text-white focus:outline-none focus:border-purpleNeon resize-none"></textarea>
+              </div>
+
+              <button type="submit" class="btn-purple font-brand font-bold py-3.5 rounded-xl w-full text-sm flex items-center justify-center gap-2 shadow-lg">
+                <i data-lucide="send" class="w-4 h-4"></i> Submit Application to Rekru.AI ATS
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- AGILE PIPELINE MANAGER VIEW -->
+    <div id="pipeline" class="view w-full max-w-7xl px-4 py-8">
+      <div class="mb-6 flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <button onclick="navigate('home')" class="text-xs text-purpleNeon hover:underline mb-2 flex items-center gap-1 font-semibold">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Home
+          </button>
+          <h2 class="font-brand text-3xl font-bold flex items-center gap-3 text-white">
+            <i data-lucide="kanban" class="text-purpleNeon w-8 h-8"></i> Candidate Pipeline Manager
+          </h2>
+          <p class="text-gray-400 text-sm mt-1">Agile ATS board to track and drag candidates across recruitment stages.</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <select id="pipeline-role-filter" onchange="filterPipelineRole()" class="bg-surface border border-panelBorder rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-purpleNeon">
+            <option value="ALL">All Roles</option>
+            <option value="Senior Lead Engineer">Senior Lead Engineer</option>
+            <option value="Principal AI Specialist">Principal AI Specialist</option>
+            <option value="Staff UI/UX Architect">Staff UI/UX Architect</option>
+          </select>
+          <button onclick="openAddCandidateModal()" class="btn-purple font-brand font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 text-xs">
+            <i data-lucide="user-plus" class="w-4 h-4"></i> Add Candidate
+          </button>
+        </div>
+      </div>
+
+      <!-- KANBAN BOARD STAGES -->
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 overflow-x-auto pb-6">
+        
+        <!-- Stage 1: Applied -->
+        <div class="glass-card p-4 rounded-2xl border border-panelBorder flex flex-col min-h-[550px] bg-space/60">
+          <div class="flex items-center justify-between mb-4 pb-2 border-b border-purpleNeon/20">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
+              <h4 class="font-brand text-xs font-bold text-white uppercase tracking-wider">01. Applied</h4>
+            </div>
+            <span class="text-xs font-mono font-bold bg-panel px-2 py-0.5 rounded text-gray-300" id="cnt-applied">0</span>
+          </div>
+          <div class="space-y-3 flex-grow overflow-y-auto" id="col-applied"></div>
+        </div>
+
+        <!-- Stage 2: Screening -->
+        <div class="glass-card p-4 rounded-2xl border border-panelBorder flex flex-col min-h-[550px] bg-space/60">
+          <div class="flex items-center justify-between mb-4 pb-2 border-b border-purpleNeon/20">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-purpleNeon"></span>
+              <h4 class="font-brand text-xs font-bold text-white uppercase tracking-wider">02. Screening</h4>
+            </div>
+            <span class="text-xs font-mono font-bold bg-panel px-2 py-0.5 rounded text-gray-300" id="cnt-screening">0</span>
+          </div>
+          <div class="space-y-3 flex-grow overflow-y-auto" id="col-screening"></div>
+        </div>
+
+        <!-- Stage 3: Interview -->
+        <div class="glass-card p-4 rounded-2xl border border-panelBorder flex flex-col min-h-[550px] bg-space/60">
+          <div class="flex items-center justify-between mb-4 pb-2 border-b border-purpleNeon/20">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+              <h4 class="font-brand text-xs font-bold text-white uppercase tracking-wider">03. Interview</h4>
+            </div>
+            <span class="text-xs font-mono font-bold bg-panel px-2 py-0.5 rounded text-gray-300" id="cnt-interview">0</span>
+          </div>
+          <div class="space-y-3 flex-grow overflow-y-auto" id="col-interview"></div>
+        </div>
+
+        <!-- Stage 4: Offer -->
+        <div class="glass-card p-4 rounded-2xl border border-panelBorder flex flex-col min-h-[550px] bg-space/60">
+          <div class="flex items-center justify-between mb-4 pb-2 border-b border-purpleNeon/20">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <h4 class="font-brand text-xs font-bold text-white uppercase tracking-wider">04. Offer</h4>
+            </div>
+            <span class="text-xs font-mono font-bold bg-panel px-2 py-0.5 rounded text-gray-300" id="cnt-offer">0</span>
+          </div>
+          <div class="space-y-3 flex-grow overflow-y-auto" id="col-offer"></div>
+        </div>
+
+        <!-- Stage 5: Hired -->
+        <div class="glass-card p-4 rounded-2xl border border-panelBorder flex flex-col min-h-[550px] bg-space/60">
+          <div class="flex items-center justify-between mb-4 pb-2 border-b border-purpleNeon/20">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+              <h4 class="font-brand text-xs font-bold text-white uppercase tracking-wider">05. Hired</h4>
+            </div>
+            <span class="text-xs font-mono font-bold bg-panel px-2 py-0.5 rounded text-gray-300" id="cnt-hired">0</span>
+          </div>
+          <div class="space-y-3 flex-grow overflow-y-auto" id="col-hired"></div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- AI INTERVIEWER TAB VIEW -->
+    <div id="ai-interviewer" class="view w-full max-w-5xl px-6 py-10">
+      <div class="mb-8">
+        <button onclick="navigate('home')" class="text-xs text-purpleNeon hover:underline mb-2 flex items-center gap-1 font-semibold">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Home
+        </button>
+        <div class="flex items-center gap-3">
+          <h2 class="font-brand text-3xl font-bold flex items-center gap-3 text-white">
+            <i data-lucide="bot" class="text-purpleNeon w-8 h-8"></i> AI Conversational Interviewer
+          </h2>
+          <span class="px-3 py-1 bg-purpleNeon/20 border border-purpleNeon/40 text-highlight text-xs font-mono font-bold rounded-full">
+            INTERACTIVE DEMO
+          </span>
+        </div>
+        <p class="text-gray-400 text-sm mt-1">Autonomous voice/chat agent that screens candidates and generates objective evaluation scorecards.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-3xl border-2 border-purpleNeon/40 relative overflow-hidden space-y-6">
+        <!-- Interactive Simulated Chat -->
+        <div class="bg-space/90 p-6 rounded-2xl border border-panelBorder space-y-4 max-h-[380px] overflow-y-auto" id="ai-chat-box">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-purpleNeon text-white flex items-center justify-center text-xs font-bold shrink-0">AI</div>
+            <div class="bg-panel border border-panelBorder p-3 rounded-2xl text-xs text-gray-200 max-w-lg">
+              Hello Alex! I am Rekru.AI's Screening Agent. I've reviewed your application for <strong>Senior Lead Engineer</strong>. Could you walk me through a distributed Python microservice system you architected recently?
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 flex-row-reverse">
+            <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shrink-0">AR</div>
+            <div class="bg-purpleNeon/20 border border-purpleNeon/40 p-3 rounded-2xl text-xs text-gray-200 max-w-lg">
+              At my previous role, I designed an event-driven Python microservices pipeline using AWS SQS and DynamoDB handling 2M requests daily.
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-purpleNeon text-white flex items-center justify-center text-xs font-bold shrink-0">AI</div>
+            <div class="bg-panel border border-panelBorder p-3 rounded-2xl text-xs text-gray-200 max-w-lg">
+              Impressive! How did you handle rate-limiting and circuit breaking when AWS services faced latency spikes?
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulation Controls -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+          <div class="flex items-center gap-3 text-xs text-gray-300">
+            <span class="w-3 h-3 rounded-full bg-green-400 animate-ping"></span>
+            <span>AI Voice Status: <strong>Active & Listening</strong></span>
+          </div>
+          <div class="flex gap-3 w-full sm:w-auto">
+            <button onclick="simulateAiReply()" class="btn-purple px-5 py-2.5 rounded-xl text-xs font-bold font-brand flex items-center gap-2">
+              <i data-lucide="play" class="w-4 h-4"></i> Simulate Next Q&A Turn
+            </button>
+            <button onclick="showToast('AI Transcript Exported to PDF')" class="btn-orange-outline px-4 py-2.5 rounded-xl text-xs font-bold font-brand flex items-center gap-2">
+              <i data-lucide="download" class="w-4 h-4"></i> Export Evaluation
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    lucide.createIcons();
+
+    // Custom Toast Notification System
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast flex items-center gap-2 text-xs font-semibold';
+      toast.innerHTML = `<i data-lucide="bell" class="w-4 h-4 text-purpleNeon"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons({ root: toast });
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'all 0.3s ease-out';
+        setTimeout(() => {
+          if(toast.parentElement) toast.parentElement.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+
+    function navigate(viewId, pushHash = true) {
+      document.querySelectorAll('.view').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      const targetView = document.getElementById(viewId);
+      if(targetView) {
+        targetView.classList.add('active');
+        if (pushHash) {
+          window.location.hash = viewId;
+        }
+      } else {
+        // Fallback to home
+        document.getElementById('home').classList.add('active');
+        if (pushHash) window.location.hash = 'home';
+      }
+      
+      // Close tools dropdown if open
+      const menu = document.getElementById('features-menu');
+      const icon = document.getElementById('dropdown-icon');
+      if (menu) menu.classList.remove('show');
+      if (icon) icon.style.transform = 'rotate(0deg)';
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Synchronize SPA Router with Browser Hash Navigation
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById(hash)) {
+        navigate(hash, false);
+      } else if (!hash) {
+        navigate('home', false);
+      }
+    });
+
+    // Smooth Scroll for Internal Section Anchors
+    function scrollToSection(event, sectionId) {
+      event.preventDefault();
+      const homeView = document.getElementById('home');
+      if (!homeView.classList.contains('active')) {
+        navigate('home');
+      }
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+
+    function initScrollReveal() {
+      const revealElements = document.querySelectorAll('.reveal, .reveal-scale');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      }, { threshold: 0.15 });
+
+      revealElements.forEach(el => observer.observe(el));
+    }
+
+    // Dropdown UI Logic
+    function toggleDropdown(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const menu = document.getElementById('features-menu');
+      const icon = document.getElementById('dropdown-icon');
+      const isShowing = menu.classList.contains('show');
+      
+      if (isShowing) {
+        menu.classList.remove('show');
+        icon.style.transform = 'rotate(0deg)';
+      } else {
+        menu.classList.add('show');
+        icon.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    document.addEventListener('click', function(event) {
+      const container = document.getElementById('features-dropdown-container');
+      const menu = document.getElementById('features-menu');
+      const icon = document.getElementById('dropdown-icon');
+      
+      if (container && !container.contains(event.target) && menu && menu.classList.contains('show')) {
+        menu.classList.remove('show');
+        if (icon) icon.style.transform = 'rotate(0deg)';
+      }
+    });
+
+    function loadSamplePrompt() {
+      document.getElementById('search-prompt').value = "Looking for a Senior Tech Lead with 5+ years experience in Python, AWS architecture, microservices, based in LATAM or US, strictly no junior or intern profiles.";
+      showToast('Sample prompt populated.');
+    }
+
+    function generateBoolean(event) {
+      const promptText = document.getElementById('search-prompt').value.trim();
+      if(!promptText) {
+        showToast('Please enter the target requirements prompt first.');
+        document.getElementById('search-prompt').focus();
+        return;
+      }
+      
+      const btn = event.currentTarget;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Synthesizing Queries...';
+      btn.disabled = true;
+      btn.classList.add('opacity-80');
+      lucide.createIcons({ root: btn });
+      
+      setTimeout(() => {
+        document.getElementById('boolean-result').classList.remove('hidden');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btn.classList.remove('opacity-80');
+        lucide.createIcons({ root: btn });
+        showToast('Boolean strings synthesized successfully!');
+        
+        document.getElementById('boolean-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 1000);
+    }
+
+    function testLinkedIn() {
+      const str = document.getElementById('linkedin-str').innerText.trim();
+      const url = 'https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(str);
+      window.open(url, '_blank');
+    }
+    
+    function copyToClipboard(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Copied search string to clipboard!');
+      }).catch(() => {
+        showToast('Copied string!');
+      });
+    }
+
+    let fileUploaded = false;
+
+    function loadSampleReqs() {
+      document.getElementById('analyzer-reqs').value = "Senior Lead Engineer: Must have 5+ years in Python development, AWS cloud infrastructure, microservices architecture, and proven engineering team leadership.";
+      showToast('Preset evaluation criteria loaded.');
+    }
+
+    function loadDemoResume(event) {
+      event.stopPropagation();
+      fileUploaded = true;
+      document.getElementById('file-name').innerText = "Alex_Rivera_Resume_2026.pdf";
+      const icon = document.getElementById('upload-icon');
+      icon.setAttribute('data-lucide', 'file-check-2');
+      document.getElementById('dropzone').classList.add('border-purpleNeon', 'bg-purpleNeon/10');
+      lucide.createIcons({ root: document.getElementById('dropzone') });
+      showToast('Sample Resume attached: Alex Rivera');
+    }
+
+    function analyzeResume(event) {
+      const reqsText = document.getElementById('analyzer-reqs').value.trim();
+      if (!reqsText) {
+        showToast('Please enter or select job requirements first.');
+        document.getElementById('analyzer-reqs').focus();
+        return;
+      }
+      if (!fileUploaded) {
+        showToast('Please attach or drop a candidate resume first.');
+        return;
+      }
+      
+      const btn = event.currentTarget;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Parsing Resume...';
+      btn.disabled = true;
+      btn.classList.add('opacity-80');
+      lucide.createIcons({ root: btn });
+
+      document.getElementById('analysis-placeholder').classList.add('hidden');
+      const resultEl = document.getElementById('analysis-result');
+      resultEl.classList.add('hidden');
+      
+      setTimeout(() => {
+        resultEl.classList.remove('hidden');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btn.classList.remove('opacity-80');
+        lucide.createIcons({ root: btn });
+        showToast('Candidate match analysis completed.');
+      }, 1400);
+    }
+
+    function addAnalyzedToPipeline() {
+      const newCand = {
+        id: Date.now(),
+        name: "Alex Rivera",
+        role: "Senior Lead Engineer",
+        score: 92,
+        stage: "screening",
+        exp: "6 yrs",
+        tags: ["Python", "AWS", "Microservices"]
+      };
+      candidates.unshift(newCand);
+      renderPipeline();
+      showToast('Alex Rivera added to Candidate Pipeline in Screening stage!');
+      navigate('pipeline');
+    }
+
+    let candidates = [
+      { id: 1, name: "Sarah Jenkins", role: "Senior Lead Engineer", score: 94, stage: "applied", exp: "8 yrs", tags: ["Python", "AWS", "K8s"] },
+      { id: 2, name: "Alex Rivera", role: "Senior Lead Engineer", score: 92, stage: "screening", exp: "6 yrs", tags: ["Microservices", "Docker"] },
+      { id: 3, name: "Michael Chen", role: "Principal AI Specialist", score: 92, stage: "interview", exp: "7 yrs", tags: ["PyTorch", "LLMs", "NLP"] },
+      { id: 4, name: "Elena Rostova", role: "Staff UI/UX Architect", score: 96, stage: "offer", exp: "9 yrs", tags: ["Figma", "Design Systems"] },
+      { id: 5, name: "David Kim", role: "Senior Lead Engineer", score: 85, stage: "applied", exp: "5 yrs", tags: ["Django", "PostgreSQL"] },
+      { id: 6, name: "Sophia Martinez", role: "Principal AI Specialist", score: 91, stage: "hired", exp: "8 yrs", tags: ["Computer Vision", "TensorFlow"] }
+    ];
+
+    const stages = ["applied", "screening", "interview", "offer", "hired"];
+
+    function renderPipeline() {
+      const selectedRole = document.getElementById('pipeline-role-filter') ? document.getElementById('pipeline-role-filter').value : 'ALL';
+      
+      stages.forEach(s => {
+        const col = document.getElementById(`col-${s}`);
+        if (!col) return;
+        col.innerHTML = '';
+
+        // Configure column container dropzone behavior
+        const colContainer = col.parentElement;
+        colContainer.ondragover = (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          colContainer.classList.add('border-purpleNeon', 'bg-purpleNeon/15', 'shadow-lg');
+        };
+        colContainer.ondragleave = (e) => {
+          colContainer.classList.remove('border-purpleNeon', 'bg-purpleNeon/15', 'shadow-lg');
+        };
+        colContainer.ondrop = (e) => {
+          e.preventDefault();
+          colContainer.classList.remove('border-purpleNeon', 'bg-purpleNeon/15', 'shadow-lg');
+          const candidateId = parseInt(e.dataTransfer.getData('text/plain'));
+          if (candidateId) {
+            dropCandidate(candidateId, s);
+          }
+        };
+
+        const filtered = candidates.filter(c => c.stage === s && (selectedRole === 'ALL' || c.role === selectedRole));
+        
+        const cntEl = document.getElementById(`cnt-${s}`);
+        if(cntEl) cntEl.innerText = filtered.length;
+
+        filtered.forEach(c => {
+          const card = document.createElement('div');
+          card.className = 'glass-card p-3.5 rounded-xl border border-purpleNeon/30 space-y-2 hover:border-purpleNeon transition relative group bg-surface/90 cursor-grab active:cursor-grabbing select-none';
+          card.setAttribute('draggable', 'true');
+
+          card.ondragstart = (e) => {
+            e.dataTransfer.setData('text/plain', c.id.toString());
+            e.dataTransfer.effectAllowed = 'move';
+            card.classList.add('opacity-40', 'scale-95');
+          };
+
+          card.ondragend = () => {
+            card.classList.remove('opacity-40', 'scale-95');
+          };
+
+          const stageIdx = stages.indexOf(c.stage);
+          const prevDisabled = stageIdx === 0;
+          const nextDisabled = stageIdx === stages.length - 1;
+
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="font-brand font-bold text-xs text-white truncate max-w-[120px] flex items-center gap-1">
+                <i data-lucide="grip-vertical" class="w-3.5 h-3.5 text-gray-400 group-hover:text-purpleNeon shrink-0"></i>
+                ${c.name}
+              </span>
+              <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-purpleNeon/20 text-purpleNeon border border-purpleNeon/40">${c.score}%</span>
+            </div>
+            <p class="text-[10px] text-gray-400 font-semibold truncate">${c.role}</p>
+            <div class="flex flex-wrap gap-1 pt-1">
+              ${c.tags.map(t => `<span class="text-[9px] bg-panel px-1.5 py-0.5 rounded text-gray-300 border border-panelBorder">${t}</span>`).join('')}
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-purpleNeon/15 text-[10px]">
+              <button onclick="moveCandidate(${c.id}, -1)" ${prevDisabled ? 'disabled class="opacity-30 cursor-not-allowed text-gray-500"' : 'class="text-purpleNeon hover:underline flex items-center gap-0.5 font-bold"'}>
+                &larr; Prev
+              </button>
+              <span class="text-[9px] text-gray-500 italic">Drag card</span>
+              <button onclick="moveCandidate(${c.id}, 1)" ${nextDisabled ? 'disabled class="opacity-30 cursor-not-allowed text-gray-500"' : 'class="text-purpleNeon hover:underline flex items-center gap-0.5 font-bold"'}>
+                Next &rarr;
+              </button>
+            </div>
+          `;
+          col.appendChild(card);
+        });
+      });
+      
+      lucide.createIcons();
+    }
+
+    function dropCandidate(id, targetStage) {
+      const candidate = candidates.find(c => c.id === id);
+      if(!candidate || candidate.stage === targetStage) return;
+      candidate.stage = targetStage;
+      renderPipeline();
+      showToast(`Moved ${candidate.name} to ${targetStage.toUpperCase()}`);
+    }
+
+    function moveCandidate(id, direction) {
+      const candidate = candidates.find(c => c.id === id);
+      if(!candidate) return;
+      const currentIdx = stages.indexOf(candidate.stage);
+      const newIdx = currentIdx + direction;
+      
+      if(newIdx >= 0 && newIdx < stages.length) {
+        candidate.stage = stages[newIdx];
+        renderPipeline();
+        showToast(`Moved ${candidate.name} to ${stages[newIdx].toUpperCase()}`);
+      }
+    }
+
+    function filterPipelineRole() {
+      renderPipeline();
+    }
+
+    function openAddCandidateModal() {
+      const name = prompt("Enter new candidate full name:");
+      if(name && name.trim()) {
+        candidates.unshift({
+          id: Date.now(),
+          name: name.trim(),
+          role: "Senior Lead Engineer",
+          score: 88,
+          stage: "applied",
+          exp: "5 yrs",
+          tags: ["Direct Add"]
+        });
+        renderPipeline();
+        showToast(`Candidate ${name} added to Pipeline.`);
+      }
+    }
+
+    function copyFormLink() {
+      const text = document.getElementById('public-form-url').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Application link copied to clipboard!');
+      }).catch(() => {
+        showToast('Copied URL!');
+      });
+    }
+
+    function selectForm(index) {
+      const titles = ["Senior Lead Engineer", "Principal AI Specialist", "Staff UI/UX Architect"];
+      const urls = [
+        "https://rekru.ai/careers/apply/senior-lead-engineer-8492",
+        "https://rekru.ai/careers/apply/principal-ai-specialist-1029",
+        "https://rekru.ai/careers/apply/staff-uiux-architect-7741"
+      ];
+      
+      document.getElementById('form-preview-title').innerText = titles[index] || "Senior Lead Engineer";
+      document.getElementById('public-form-url').innerText = urls[index] || urls[0];
+      showToast(`Selected job form: ${titles[index]}`);
+    }
+
+    function submitCandidateApp(event) {
+      event.preventDefault();
+      const name = document.getElementById('app-name').value.trim();
+      const exp = document.getElementById('app-exp').value || "5";
+      if(!name) return;
+
+      candidates.unshift({
+        id: Date.now(),
+        name: name,
+        role: document.getElementById('form-preview-title').innerText,
+        score: Math.floor(Math.random() * 10) + 88,
+        stage: "applied",
+        exp: `${exp} yrs`,
+        tags: ["Applicant Portal"]
+      });
+      renderPipeline();
+
+      showToast(`Application submitted! ${name} added to ATS Pipeline.`);
+      document.getElementById('candidate-apply-form').reset();
+    }
+
+    function simulateAiReply() {
+      const chatBox = document.getElementById('ai-chat-box');
+      const sampleQ = [
+        "How do you handle zero-downtime database migrations when updating schema versions?",
+        "Can you describe your strategy for caching high-throughput API endpoints with Redis?"
+      ];
+      const randomQ = sampleQ[Math.floor(Math.random() * sampleQ.length)];
+
+      const item = document.createElement('div');
+      item.className = 'flex items-start gap-3';
+      item.innerHTML = `
+        <div class="w-8 h-8 rounded-full bg-purpleNeon text-white flex items-center justify-center text-xs font-bold shrink-0">AI</div>
+        <div class="bg-panel border border-panelBorder p-3 rounded-2xl text-xs text-gray-200 max-w-lg">
+          ${randomQ}
+        </div>
+      `;
+      chatBox.appendChild(item);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      showToast('AI Interviewer asked follow-up question.');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initScrollReveal();
+      renderPipeline();
+      
+      // Initialize view based on current window hash
+      const hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById(hash)) {
+        navigate(hash, false);
+      }
+    });
+  </script>
+</body>
+</html>
